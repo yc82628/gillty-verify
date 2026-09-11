@@ -1,0 +1,83 @@
+==============================================================================
+ GILLTY — dependencies & one-shot install
+==============================================================================
+
+This is a Node.js/TypeScript project (plus one Rust program), so there is no
+Python-style requirements file. The real manifest is package.json, and
+`npm install` installs everything in it. This file exists as a human-readable
+list and copy-paste commands.
+
+Windows users: run all of this inside the Ubuntu (WSL) terminal, from the
+project folder (`cd ~/gillty-verify`), NOT in PowerShell.
+
+------------------------------------------------------------------------------
+ ONE-SHOT (recommended)
+------------------------------------------------------------------------------
+
+    bash setup.sh
+
+That runs `npm install` and creates `.env.local`. Or do it manually:
+
+    npm install
+
+------------------------------------------------------------------------------
+ EXPLICIT ONE-LINE INSTALL (if you'd rather not rely on package.json)
+------------------------------------------------------------------------------
+
+Runtime libraries:
+
+    npm install @solana/web3.js@^1.98.4 @ethereum-attestation-service/eas-sdk@^2.7.0 ethers@^6.13.2 next@^14.2.5 react@^18.3.1 react-dom@^18.3.1 tweetnacl@^1.0.3
+
+Dev/build libraries:
+
+    npm install -D typescript@^5.5.3 @types/node@^20 @types/react@^18 @types/react-dom@^18 tsx@^4.16.2
+
+------------------------------------------------------------------------------
+ WHAT EACH LIBRARY IS FOR
+------------------------------------------------------------------------------
+
+RUNTIME
+  @solana/web3.js .................. talk to Solana (build tx, read accounts)
+  @ethereum-attestation-service/eas-sdk  write the Base attestation (EAS)
+  ethers ........................... EVM signer/provider for the Base write
+  next ............................. the web framework (App Router)
+  react, react-dom ................. UI
+  tweetnacl ........................ Ed25519 device keypair + signatures
+
+DEV / BUILD
+  typescript ....................... type checking / compile
+  @types/node ...................... Node type definitions
+  @types/react, @types/react-dom ... React type definitions
+  tsx .............................. run the TypeScript tests (npm test)
+
+------------------------------------------------------------------------------
+ SYSTEM TOOLCHAIN (installed once, NOT via npm)
+------------------------------------------------------------------------------
+
+Install all of these in one command (Ubuntu/WSL, macOS, Linux):
+
+    curl --proto '=https' --tlsv1.2 -sSfL https://solana-install.solana.workers.dev | bash
+
+That provides:
+  Rust + Cargo ..................... compiles the on-chain program
+  Solana CLI (Agave) ............... keypairs, airdrops, config
+  Anchor CLI ....................... build/deploy the program   (see version note)
+  Node.js 20+ ...................... runs npm and the web app
+  Yarn ............................. (optional; npm is used here)
+
+Ubuntu build deps (run once if a Rust build complains):
+
+    sudo apt update && sudo apt install -y build-essential pkg-config libudev-dev unzip
+
+ANCHOR VERSION NOTE
+  The program pins anchor-lang 0.30.1. Match the CLI to it or the build fails:
+
+    cargo install --git https://github.com/solana-foundation/anchor --tag v0.30.1 anchor-cli
+    anchor --version   # anchor-cli 0.30.1
+
+------------------------------------------------------------------------------
+ VERIFY EVERYTHING IS INSTALLED
+------------------------------------------------------------------------------
+
+    rustc --version && solana --version && anchor --version && node --version
+    npm test
